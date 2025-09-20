@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -H 0.0.0.0 --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "bunx tsc --noEmit && next lint",
+    "dev": "bunx next dev -H 0.0.0.0 --turbopack",
+    "build": "bunx next build",
+    "start": "bunx next start",
+    "lint": "bunx tsc --noEmit && bunx next lint",
     "format": "bunx biome format --write"
   },
   "dependencies": {
