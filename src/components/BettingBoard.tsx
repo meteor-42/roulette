@@ -26,7 +26,7 @@ export function BettingBoard({ balance, onPlaceBet, activeBets, disabled }: Bett
       type,
       amount: selectedChip,
       numbers,
-      payout: calculatePayout(type)
+      payout: calculatePayout(type, selectedChip)
     };
 
     onPlaceBet(bet);
