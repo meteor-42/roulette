@@ -89,7 +89,6 @@ export default function Home() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">Казино Рулетка</h1>
-          <p className="text-zinc-400">Демо-версия для развлечения</p>
           <Badge variant="secondary" className="mt-2 bg-zinc-800 text-zinc-300">
             Без реальных денег
           </Badge>
@@ -109,7 +108,7 @@ export default function Home() {
                   variant="outline"
                   className="bg-zinc-900 border-zinc-700 text-white hover:bg-zinc-800"
                 >
-                  Добавить $500
+                  Занять у Казино $500
                 </Button>
               )}
             </div>
@@ -126,27 +125,26 @@ export default function Home() {
               <Button
                 onClick={spinWheel}
                 disabled={isSpinning || activeBets.length === 0}
-                className="bg-white text-black hover:bg-zinc-200"
+                className={`bg-white text-black hover:bg-zinc-200 ${isSpinning ? 'opacity-0' : 'opacity-100'} transition-all`}
               >
                 {isSpinning ? 'Вращение...' : 'Крутить'}
               </Button>
             </div>
           </div>
 
-          {lastResult && (
-            <div className="mt-4 flex gap-2">
-              {lastResult.won > 0 && (
-                <Badge className="bg-green-600 text-white">
-                  Выигрыш: +${lastResult.won}
-                </Badge>
-              )}
-              {lastResult.lost > 0 && (
-                <Badge className="bg-red-600 text-white">
-                  Проигрыш: -${lastResult.lost}
-                </Badge>
-              )}
-            </div>
-          )}
+          {/* Result display */}
+          <div className="mt-4 flex gap-2 min-h-[40px]">
+            {lastResult?.won > 0 && (
+              <Badge className="bg-green-600 text-white">
+                Выигрыш: +${lastResult.won}
+              </Badge>
+            )}
+            {lastResult?.lost > 0 && (
+              <Badge className="bg-red-600 text-white">
+                Проигрыш: -${lastResult.lost}
+              </Badge>
+            )}
+          </div>
         </Card>
 
         {/* Main game area */}

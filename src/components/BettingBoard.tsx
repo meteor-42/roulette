@@ -26,7 +26,7 @@ export function BettingBoard({ balance, onPlaceBet, activeBets, disabled }: Bett
       type,
       amount: selectedChip,
       numbers,
-      payout: calculatePayout(type, selectedChip)
+      payout: calculatePayout(type, selectedChip),
     };
 
     onPlaceBet(bet);
@@ -39,6 +39,11 @@ export function BettingBoard({ balance, onPlaceBet, activeBets, disabled }: Bett
         (!numbers || JSON.stringify(bet.numbers) === JSON.stringify(numbers))
       )
       .reduce((sum, bet) => sum + bet.amount, 0);
+  };
+
+  const getColor = (num: number) => {
+    if (num === 0) return 'bg-green-600'; // Для числа 0
+    return num % 2 === 0 ? 'bg-black' : 'bg-red-600'; // Чередуем черный и красный
   };
 
   return (
@@ -86,16 +91,14 @@ export function BettingBoard({ balance, onPlaceBet, activeBets, disabled }: Bett
               </button>
             </div>
             {Array.from({ length: 36 }, (_, i) => i + 1).map((num) => {
-              const isRed = RED_NUMBERS.includes(num);
               const betAmount = getTotalBetAmount('straight', [num]);
+              const color = getColor(num);
               return (
                 <button
                   key={num}
                   onClick={() => placeBet('straight', [num])}
                   disabled={disabled}
-                  className={`relative aspect-square ${
-                    isRed ? 'bg-red-600 hover:bg-red-500' : 'bg-zinc-900 hover:bg-zinc-800'
-                  } disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm rounded transition-colors border border-zinc-700`}
+                  className={`relative aspect-square ${color} disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm rounded transition-colors border border-zinc-700`}
                 >
                   {num}
                   {betAmount > 0 && (
@@ -113,39 +116,93 @@ export function BettingBoard({ balance, onPlaceBet, activeBets, disabled }: Bett
         <div className="space-y-3">
           <div className="text-zinc-400 text-sm font-medium">Внешние ставки:</div>
 
-          {/* Even money bets */}
-          <div className="grid grid-cols-3 gap-2">
-            {[
-              { type: 'red' as BetType, label: 'Красное', className: 'bg-red-600 hover:bg-red-500' },
-              { type: 'black' as BetType, label: 'Черное', className: 'bg-zinc-900 hover:bg-zinc-800' },
-              { type: 'even' as BetType, label: 'Четное', className: 'bg-zinc-800 hover:bg-zinc-700' },
-              { type: 'odd' as BetType, label: 'Нечетное', className: 'bg-zinc-800 hover:bg-zinc-700' },
-              { type: 'low' as BetType, label: '1-18', className: 'bg-zinc-800 hover:bg-zinc-700' },
-              { type: 'high' as BetType, label: '19-36', className: 'bg-zinc-800 hover:bg-zinc-700' },
-            ].map(({ type, label, className }) => {
-              const betAmount = getTotalBetAmount(type);
-              return (
-                <button
-                  key={type}
-                  onClick={() => placeBet(type)}
-                  disabled={disabled}
-                  className={`relative p-3 ${className} disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded transition-colors border border-zinc-700`}
-                >
-                  {label}
-                  {betAmount > 0 && (
-                    <Badge className="absolute -top-2 -right-2 bg-white text-black text-xs">
-                      ${betAmount}
-                    </Badge>
-                  )}
-                </button>
-              );
-            })}
+          {/* Even and Odd */}
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            <button
+              onClick={() => placeBet('even')}
+              disabled={disabled}
+              className="relative p-3 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded transition-colors border border-zinc-700"
+            >
+              Четное
+              {getTotalBetAmount('even') > 0 && (
+                <Badge className="absolute -top-2 -right-2 bg-white text-black text-xs">
+                  ${getTotalBetAmount('even')}
+                </Badge>
+              )}
+            </button>
+            <button
+              onClick={() => placeBet('odd')}
+              disabled={disabled}
+              className="relative p-3 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded transition-colors border border-zinc-700"
+            >
+              Нечетное
+              {getTotalBetAmount('odd') > 0 && (
+                <Badge className="absolute -top-2 -right-2 bg-white text-black text-xs">
+                  ${getTotalBetAmount('odd')}
+                </Badge>
+              )}
+            </button>
+          </div>
+
+          {/* Red and Black */}
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            <button
+              onClick={() => placeBet('red')}
+              disabled={disabled}
+              className="relative p-3 bg-red-600 hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded transition-colors border border-zinc-700"
+            >
+              Красное
+              {getTotalBetAmount('red') > 0 && (
+                <Badge className="absolute -top-2 -right-2 bg-white text-black text-xs">
+                  ${getTotalBetAmount('red')}
+                </Badge>
+              )}
+            </button>
+            <button
+              onClick={() => placeBet('black')}
+              disabled={disabled}
+              className="relative p-3 bg-black hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded transition-colors border border-zinc-700"
+            >
+              Черное
+              {getTotalBetAmount('black') > 0 && (
+                <Badge className="absolute -top-2 -right-2 bg-white text-black text-xs">
+                  ${getTotalBetAmount('black')}
+                </Badge>
+              )}
+            </button>
+          </div>
+
+          {/* Low and High */}
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            <button
+              onClick={() => placeBet('low')}
+              disabled={disabled}
+              className="relative p-3 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded transition-colors border border-zinc-700"
+            >
+              1-18
+              {getTotalBetAmount('low') > 0 && (
+                <Badge className="absolute -top-2 -right-2 bg-white text-black text-xs">
+                  ${getTotalBetAmount('low')}
+                </Badge>
+              )}
+            </button>
+            <button
+              onClick={() => placeBet('high')}
+              disabled={disabled}
+              className="relative p-3 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded transition-colors border border-zinc-700"
+            >
+              19-36
+              {getTotalBetAmount('high') > 0 && (
+                <Badge className="absolute -top-2 -right-2 bg-white text-black text-xs">
+                  ${getTotalBetAmount('high')}
+                </Badge>
+              )}
+            </button>
           </div>
 
           {/* Dozens */}
-          <div className="grid grid-cols-3 gap-2">
-            {[
-              { type: 'dozen1' as BetType, label: '1-я дюжина' },
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            {[{ type: 'dozen1' as BetType, label: '1-я дюжина' },
               { type: 'dozen2' as BetType, label: '2-я дюжина' },
               { type: 'dozen3' as BetType, label: '3-я дюжина' },
             ].map(({ type, label }) => {
@@ -170,8 +227,7 @@ export function BettingBoard({ balance, onPlaceBet, activeBets, disabled }: Bett
 
           {/* Columns */}
           <div className="grid grid-cols-3 gap-2">
-            {[
-              { type: 'column1' as BetType, label: 'Колонка 1' },
+            {[{ type: 'column1' as BetType, label: 'Колонка 1' },
               { type: 'column2' as BetType, label: 'Колонка 2' },
               { type: 'column3' as BetType, label: 'Колонка 3' },
             ].map(({ type, label }) => {
